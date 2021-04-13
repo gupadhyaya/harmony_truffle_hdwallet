@@ -1,0 +1,19 @@
+{
+  "name": "harmony_truffle_hdwallet",
+  "version": "0.0.1",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test --network",
+    "clean": "rm -rf build"
+  },
+  "keywords": [],
+  "author": "vinhbhn",
+  "license": "ISC",
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^1.2.6"
+  }
+}
