@@ -1,6 +1,7 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const mnemonic = 'YOUR_MNEMONIC';
-const privateKeyTest = 'YOUR_PRIVATE_KEY';
+const privateKeyTest = 'YOUR_PRIVATE_KEY_1';
+const privateKeyTest2 = 'YOUR_PRIVATE_KEY_2';
 
 module.exports = {
   // Uncommenting the defaults below
@@ -43,6 +44,24 @@ module.exports = {
           privateKeys: [privateKeyTest],
           providerOrUrl: 'https://api.s0.b.hmny.io',
         });
+      },
+      network_id: 1666700000,
+    },
+    testnetHarmony: {
+      provider: () => {
+        if (!privateKeyTest.trim()) {
+          throw new Error(
+            'Please enter a private key with funds, you can use the default one'
+          );
+        }
+        // return new HDWalletProvider(
+        //   [privateKeyTest, privateKeyTest2],
+        //   'https://api.s0.b.hmny.io'
+        // );
+        return new HDWalletProvider(
+          privateKeyTest2,
+          'https://api.s0.b.hmny.io'
+        );
       },
       network_id: 1666700000,
     },

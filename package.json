@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "vinhbhn",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@truffle/hdwallet-provider": "^1.2.6"
   }
