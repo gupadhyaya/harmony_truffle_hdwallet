@@ -211,16 +211,20 @@ contract AAGToken is Context, IERC20 {
     uint256 private constant _TOTAL_SUPPLY = 1000000000e18; // Initial supply 1 000 000 000
     bool private initialPoolClaimed = false;
 
+    address public mintingAdmin;
+
     constructor(
         address admin_,
         address recoveryAdmin_,
         uint256 timelockPeriod_,
         address lossless_,
-        bool losslessOn
+        bool losslessOn,
+        address mintingAdmin_
     ) {
         _mint(address(this), _TOTAL_SUPPLY);
         admin = admin_;
         recoveryAdmin = recoveryAdmin_;
+        mintingAdmin = mintingAdmin_;
         timelockPeriod = timelockPeriod_;
         isLosslessOn = losslessOn;
         lossless = ILosslessController(lossless_);
@@ -310,6 +314,11 @@ contract AAGToken is Context, IERC20 {
 
     modifier onlyAdmin() {
         require(_msgSender() == admin, "ERC20: Must be recovery admin");
+        _;
+    }
+
+    modifier onlyMintingAdmin() {
+        require(_msgSender() == mintingAdmin, "ERC20: Must be recovery admin");
         _;
     }
 
@@ -404,12 +413,12 @@ contract AAGToken is Context, IERC20 {
         return _balances[account];
     }
 
-    function mint(address recipient, uint256 amount) public onlyAdmin {
+    function mint(address recipient, uint256 amount) public onlyMintingAdmin {
         require(transfer(recipient, amount), "mint failed");
     }
 
     function burn(address sender, uint256 amount) public {
-        require(transferFrom(sender, admin, amount), "burn failed");
+        require(transferFrom(sender, mintingAdmin, amount), "burn failed");
     }
 
     function transfer(address recipient, uint256 amount)
