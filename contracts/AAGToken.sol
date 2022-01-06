@@ -209,7 +209,6 @@ contract AAGToken is Context, IERC20 {
     event LosslessTurnedOn();
 
     uint256 private constant _TOTAL_SUPPLY = 1000000000e18; // Initial supply 1 000 000 000
-    bool private initialPoolClaimed = false;
 
     address public mintingAdmin;
 
@@ -228,14 +227,6 @@ contract AAGToken is Context, IERC20 {
         timelockPeriod = timelockPeriod_;
         isLosslessOn = losslessOn;
         lossless = ILosslessController(lossless_);
-    }
-
-    // AAG unlocked tokens claiming
-
-    function claimTokens() public onlyRecoveryAdmin {
-        require(initialPoolClaimed == false, "Already claimed");
-        initialPoolClaimed = true;
-        _transfer(address(this), admin, _TOTAL_SUPPLY);
     }
 
     // --- LOSSLESS modifiers ---
