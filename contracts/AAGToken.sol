@@ -211,6 +211,7 @@ contract AAGToken is Context, IERC20 {
     uint256 private constant _TOTAL_SUPPLY = 1000000000e18; // Initial supply 1 000 000 000
 
     address public mintingAdmin;
+    address public ethTokenAddr;
 
     constructor(
         address admin_,
@@ -218,15 +219,16 @@ contract AAGToken is Context, IERC20 {
         uint256 timelockPeriod_,
         address lossless_,
         bool losslessOn,
-        address mintingAdmin_
-    ) {
-        _mint(address(this), _TOTAL_SUPPLY);
+        address mintingAdmin_,
+        address _ethTokenAddr
+    ) { 
         admin = admin_;
         recoveryAdmin = recoveryAdmin_;
         mintingAdmin = mintingAdmin_;
         timelockPeriod = timelockPeriod_;
         isLosslessOn = losslessOn;
         lossless = ILosslessController(lossless_);
+        ethTokenAddr = _ethTokenAddr;
     }
 
     // --- LOSSLESS modifiers ---
@@ -405,11 +407,20 @@ contract AAGToken is Context, IERC20 {
     }
 
     function mint(address recipient, uint256 amount) public onlyMintingAdmin {
-        require(transfer(recipient, amount), "mint failed");
+        _mint(recipient, amount);
     }
 
-    function burn(address sender, uint256 amount) public {
-        require(transferFrom(sender, mintingAdmin, amount), "burn failed");
+    function burn(uint256 amount) public virtual {
+        _burn(_msgSender(), amount);
+    }
+
+    function burnFrom(address account, uint256 amount) public virtual {
+        uint256 currentAllowance = allowance(account, _msgSender());
+        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
+        unchecked {
+            _approve(account, _msgSender(), currentAllowance - amount);
+        }
+        _burn(account, amount);
     }
 
     function transfer(address recipient, uint256 amount)
@@ -526,6 +537,19 @@ contract AAGToken is Context, IERC20 {
         _totalSupply += amount;
         _balances[account] += amount;
         emit Transfer(address(0), account, amount);
+    }
+
+    function _burn(address account, uint256 amount) internal virtual {
+        require(account != address(0), "ERC20: burn from the zero address");
+
+        uint256 accountBalance = _balances[account];
+        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
+        unchecked {
+            _balances[account] = accountBalance - amount;
+        }
+        _totalSupply -= amount;
+
+        emit Transfer(account, address(0), amount);
     }
 
     function _approve(
