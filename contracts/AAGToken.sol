@@ -402,7 +402,7 @@ contract AAGToken is Context, IERC20 {
         _mint(recipient, amount);
     }
 
-    function burn(address account, uint256 amount) public {
+    function burnFrom(address account, uint256 amount) public {
         _burn(account, amount);
     }
 
