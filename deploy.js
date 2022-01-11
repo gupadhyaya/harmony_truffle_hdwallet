@@ -18,7 +18,7 @@ const Web3 = require("web3");
   let losslessOn = true;
 
   const contractJson = require("./build/contracts/AAGToken.json");
-  const contract = new web3.eth.Contract(contractJson.abi);
+  let contract = new web3.eth.Contract(contractJson.abi);
   const txContract = await contract
     .deploy({
       data: contractJson.bytecode,
@@ -36,7 +36,21 @@ const Web3 = require("web3");
       gas: process.env.GAS_LIMIT,
       gasPrice: new BN(await web3.eth.getGasPrice()).mul(new BN(1)),
     });
-  console.log("Deployed contract to", `${txContract.options.address}`);
+  let contractAddr = `${txContract.options.address}`;
+  console.log("Deployed contract to", contractAddr);
+  contract = new web3.eth.Contract(contractJson.abi, contractAddr);
+  let resp = await contract.methods.mint(process.env.USER1, '100').send({
+    from: ethMasterAccount.address,
+    gas: process.env.GAS_LIMIT,
+    gasPrice: new BN(await web3.eth.getGasPrice()).mul(new BN(1)),
+  });
+  console.log(resp);
+  resp = await contract.methods.burn(process.env.USER1, '100').send({
+    from: ethMasterAccount.address,
+    gas: process.env.GAS_LIMIT,
+    gasPrice: new BN(await web3.eth.getGasPrice()).mul(new BN(1)),
+  });
+  console.log(resp);
 
   // admin is harmony side bridge contract
   // recoveryAdmin is harmony side multisig wallet

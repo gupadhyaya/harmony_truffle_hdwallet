@@ -303,7 +303,7 @@ contract AAGToken is Context, IERC20 {
     }
 
     modifier onlyMintingAdmin() {
-        require(_msgSender() == mintingAdmin, "ERC20: Must be recovery admin");
+        require(_msgSender() == mintingAdmin, "ERC20: Must be minting admin");
         _;
     }
 
