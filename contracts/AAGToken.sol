@@ -186,7 +186,7 @@ contract AAGToken is Context, IERC20 {
 
     uint256 private _totalSupply;
     string private constant NAME = "AAG";
-    string private constant SYMBOL = "AAG";
+    string private constant SYMBOL = "1AAG";
 
     address public recoveryAdmin;
     address private recoveryAdminCanditate;
