@@ -208,8 +208,6 @@ contract AAGToken is Context, IERC20 {
     event LosslessTurnedOff();
     event LosslessTurnedOn();
 
-    uint256 private constant _TOTAL_SUPPLY = 1000000000e18; // Initial supply 1 000 000 000
-
     address public mintingAdmin;
 
     constructor(
@@ -403,7 +401,7 @@ contract AAGToken is Context, IERC20 {
     }
 
     function burnFrom(address account, uint256 amount) public {
-        _burn(account, amount);
+        _burnFrom(account, amount);
     }
 
     function transfer(address recipient, uint256 amount)
@@ -528,6 +526,16 @@ contract AAGToken is Context, IERC20 {
         _totalSupply -= amount;
         _balances[account] -= amount;
         emit Transfer(account, address(0), amount);
+    }
+
+    function _burnFrom(address account, uint256 amount) internal {
+        _burn(account, amount);
+        uint256 currentAllowance = _allowances[account][_msgSender()];
+        require(
+            currentAllowance >= amount,
+            "ERC20: burn amount exceeds allowance"
+        );
+        _approve(account, _msgSender(), currentAllowance - amount);
     }
 
     function _approve(
