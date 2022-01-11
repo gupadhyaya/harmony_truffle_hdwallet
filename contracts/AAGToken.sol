@@ -220,7 +220,6 @@ contract AAGToken is Context, IERC20 {
         bool losslessOn,
         address mintingAdmin_
     ) {
-        _mint(address(this), _TOTAL_SUPPLY);
         admin = admin_;
         recoveryAdmin = recoveryAdmin_;
         mintingAdmin = mintingAdmin_;
@@ -300,11 +299,6 @@ contract AAGToken is Context, IERC20 {
 
     modifier onlyRecoveryAdmin() {
         require(_msgSender() == recoveryAdmin, "ERC20: Must be recovery admin");
-        _;
-    }
-
-    modifier onlyAdmin() {
-        require(_msgSender() == admin, "ERC20: Must be recovery admin");
         _;
     }
 
@@ -405,11 +399,11 @@ contract AAGToken is Context, IERC20 {
     }
 
     function mint(address recipient, uint256 amount) public onlyMintingAdmin {
-        require(transfer(recipient, amount), "mint failed");
+        _mint(recipient, amount);
     }
 
-    function burn(address sender, uint256 amount) public {
-        require(transferFrom(sender, mintingAdmin, amount), "burn failed");
+    function burn(address account, uint256 amount) public {
+        _burn(account, amount);
     }
 
     function transfer(address recipient, uint256 amount)
@@ -526,6 +520,14 @@ contract AAGToken is Context, IERC20 {
         _totalSupply += amount;
         _balances[account] += amount;
         emit Transfer(address(0), account, amount);
+    }
+
+    function _burn(address account, uint256 amount) internal virtual {
+        require(account != address(0), "ERC20: mint to the zero address");
+
+        _totalSupply -= amount;
+        _balances[account] -= amount;
+        emit Transfer(account, address(0), amount);
     }
 
     function _approve(
